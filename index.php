@@ -45,15 +45,25 @@ if(isset($_GET['out'])) {
 				<div class='boxcontent'>
 				<p align='right'><a href='openthread.php'><button>Buat Thread Baru</button></a></p>
 				<br><hr><br>
+				<?php
+				$qT = $connect->prepare("SELECT * FROM post ORDER BY id_post DESC");
+				$qT->execute();
+				$thread = $qT->fetchAll();
+				for($i=0; $i<count($thread); $i++) {
+				$id = $thread[$i]['id_post'];
+				$judul = $thread[$i]['title'];
+				$uplink = $thread[$i]['uplink'];
+				?>
 				<fieldset class='threadtitle'>
-				<a href='thread.php?id=0'>Judul Thread</a>
-				<legend class='threadstarter'>Started by <a href='profile.php?id=0'>User Ini</a></legend>
+				<a href='thread.php?id=<?php echo $id; ?>'><?php echo $judul; ?></a>
+				<legend class='threadstarter'>Started by <a href='profile.php?id=<?php echo $uplink; ?>'><?php echo $uplink; ?></a></legend>
 				</fieldset>
+				<?php } ?>
 				</div>
 			</div>
 		</div>
 		
-		<div class='right'  style='height:100%;'>
+		<div class='right'>
 			<div class="box" style='height:100%;'>
 				<div class='boxtitle'><?php if($isLogin ==0 ) { ?>Login Form<?php } else { ?> User Info<?php } ?></div>
 				<div class='boxcontent'>
@@ -63,11 +73,14 @@ if(isset($_GET['out'])) {
 				<input type='text' name='username' placeholder='Enter your Username'>
 				</fieldset>
 				<fieldset class='inp-field'><legend>Password</legend>
-				<input type='text' name='password' placeholder='Enter your password'>
+				<input type='password' name='password' placeholder='Enter your password'>
 				</fieldset>
 				<p align='right'><button type='submit' Value='Sign in'>Sign In</button></p>
 				</form>
 				<?php } else { ?> 
+				Username : 
+				<?php echo $_SESSION['username']; ?><br>
+				Status : Online
 				<?php } ?>
 				</div>
 			</div>

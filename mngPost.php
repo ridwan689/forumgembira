@@ -1,12 +1,9 @@
 <?php
-session_start();
+// index.php
 include 'database_connection.php';
-if(!isset($_SESSION['user_id'])) {
-	echo( "<script>alert('silahkan login dulu');window.location='index.php';</script>");
-}
-
+session_start();
 $isLogin = 0;
-if(isset($_SESSION['user_id'])) {
+if(isset($_SESSION['username'])) {
 	$isLogin = 1;
 }
 if(isset($_GET['out'])) {
@@ -19,8 +16,6 @@ if(isset($_GET['out'])) {
 	<title>.:: Forum Gembira ::.</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<link rel="stylesheet" href="style.css">
-	<link rel="stylesheet" href="texting.css">
-	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-jgrowl/1.4.0/jquery.jgrowl.css">
 </head>
 
@@ -46,25 +41,34 @@ if(isset($_GET['out'])) {
 	<div class="wrapper-flex">
 		<div class='left'>
 			<div class="box col1">
-				<div class='boxtitle'>.:: Open Thread ::.</div>
+				<?php
+				if(!isset($_GET['id'])) 
+					echo "<scritp>window.location='index.php';</script>";
+				$id = $_GET['id'];
+				$getThread = $connect->prepare("SELECT * FROM `post` WHERE id_post='$id'");
+				$getThread->execute();
+				$getThread = $getThread->fetchAll()[0];
+				
+				?>
+				<div class='boxtitle'><?php echo $getThread['title']; ?></div>
 				<div class='boxcontent'>
-				<iframe src='ngepost.php' width="100%" height="600px" style='border:none;'></iframe>
-				</iframe>
+				<?php echo $getThread['konten']; ?>
+				<br><hr><br>
 				</div>
 			</div>
 		</div>
 		
-		<div class='right'  style='height:100%;'>
+		<div class='right'>
 			<div class="box" style='height:100%;'>
 				<div class='boxtitle'><?php if($isLogin ==0 ) { ?>Login Form<?php } else { ?> User Info<?php } ?></div>
 				<div class='boxcontent'>
 				<?php if($isLogin ==0 ) { ?>
-				<form method='post' action='?act=login'>
+				<form method='post' action='+login.php'>
 				<fieldset class='inp-field'><legend>Username</legend>
 				<input type='text' name='username' placeholder='Enter your Username'>
 				</fieldset>
 				<fieldset class='inp-field'><legend>Password</legend>
-				<input type='text' name='password' placeholder='Enter your password'>
+				<input type='password' name='password' placeholder='Enter your password'>
 				</fieldset>
 				<p align='right'><button type='submit' Value='Sign in'>Sign In</button></p>
 				</form>
@@ -112,9 +116,6 @@ if(isset($_GET['out'])) {
 	</div>
 	<script src="https://code.jquery.com/jquery-3.5.0.js"></script>
 	<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery-jgrowl/1.4.8/jquery.jgrowl.min.js'></script>
-	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.2.2/jquery.form.js"></script>
-	<script src='sc.js'></scripT>
 	<script>
 		(function($){
 
@@ -134,7 +135,6 @@ if(isset($_GET['out'])) {
 			
 			msg = "Ahmad Ridwani Hakim - <small>1915016024</small><br>Daffa Mafazi - <small>1915016040</small>";
 			$.jGrowl(msg, { header: "our team",sticky: true });
-			
 			
 			
 		});
