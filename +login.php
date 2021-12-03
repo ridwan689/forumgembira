@@ -38,16 +38,18 @@ if(isset($_POST['username']))
 				$statement = $connect->prepare($sub_query);
 				$statement->execute();
 				$_SESSION['login_details_id'] = $connect->lastInsertId();
+				$_SESSION['level'] = $statement->fetchAll()[0]['level'];
 				header('location:index.php');
 			}
 			else
 			{
-				$message = '<label>Wrong Password</label>';
+				$message = '<script>alert("Invalid username/password");window.location="index.php";</script>';
 			}
 		}
 	}
 	else
 	{
-		$message = '<label>Wrong Username</labe>';
+		$message = '<script>alert("Invalid username/password");window.location="index.php";</script>';
 	}
+	echo $message;
 }
