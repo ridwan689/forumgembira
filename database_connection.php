@@ -5,20 +5,15 @@
 $connect = new PDO("mysql:host=localhost;dbname=forum_gembira;charset=utf8mb4", "root", "");
 
 date_default_timezone_set('Asia/Makassar');
-function fetch_user_last_activity($user_id, $connect)
+function get_user_name($user_id, $connect)
 {
-	$query = "
-	SELECT * FROM member_login_details 
-	WHERE user_id = '$user_id' 
-	ORDER BY last_activity DESC 
-	LIMIT 1
-	";
+	$query = "SELECT username FROM member_login WHERE user_id = '$user_id'";
 	$statement = $connect->prepare($query);
 	$statement->execute();
 	$result = $statement->fetchAll();
 	foreach($result as $row)
 	{
-		return $row['last_activity'];
+		return $row['username'];
 	}
 }
 
@@ -51,7 +46,7 @@ function fetch_user_chat_history($from_user_id, $to_user_id, $connect)
 			else
 			{
 				$chat_message = $row['chat_message'];
-				$user_name = '<button type="button" class="btn btn-danger btn-xs remove_chat" id="'.$row['chat_message_id'].'">x</button>&nbsp;<b class="text-success">You</b>';
+				$user_name = '<b class="text-success">You</b>';
 			}
 			
 
@@ -71,13 +66,13 @@ function fetch_user_chat_history($from_user_id, $to_user_id, $connect)
 			$dynamic_background = 'background-color:#ffffe6;';
 		}
 		$output .= '
-		<li style="border-bottom:1px dotted #ccc;padding-top:8px; padding-left:8px; padding-right:8px;'.$dynamic_background.'">
+		<div style="border-bottom:1px dotted #ccc;padding-top:8px;'.$dynamic_background.'">
 			<p>'.$user_name.' - '.$chat_message.'
 				<div align="right">
 					- <small><em>'.$row['timestamp'].'</em></small>
 				</div>
 			</p>
-		</li>
+		</div>
 		';
 	}
 	$output .= '</ul>';
@@ -93,58 +88,6 @@ function fetch_user_chat_history($from_user_id, $to_user_id, $connect)
 	return $output;
 }
 
-function get_user_name($user_id, $connect)
-{
-	$query = "SELECT username FROM member_login WHERE user_id = '$user_id'";
-	$statement = $connect->prepare($query);
-	$statement->execute();
-	$result = $statement->fetchAll();
-	foreach($result as $row)
-	{
-		return $row['username'];
-	}
-}
-
-function count_unseen_message($from_user_id, $to_user_id, $connect)
-{
-	$query = "
-	SELECT * FROM chat_message 
-	WHERE from_user_id = '$from_user_id' 
-	AND to_user_id = '$to_user_id' 
-	AND status = '1'
-	";
-	$statement = $connect->prepare($query);
-	$statement->execute();
-	$count = $statement->rowCount();
-	$output = '';
-	if($count > 0)
-	{
-		$output = '<span class="label label-success">'.$count.'</span>';
-	}
-	return $output;
-}
-
-function fetch_is_type_status($user_id, $connect)
-{
-	$query = "
-	SELECT is_type FROM member_login_details 
-	WHERE user_id = '".$user_id."' 
-	ORDER BY last_activity DESC 
-	LIMIT 1
-	";	
-	$statement = $connect->prepare($query);
-	$statement->execute();
-	$result = $statement->fetchAll();
-	$output = '';
-	foreach($result as $row)
-	{
-		if($row["is_type"] == 'yes')
-		{
-			$output = ' - <small><em><span class="text-muted">Typing...</span></em></small>';
-		}
-	}
-	return $output;
-}
 
 function fetch_group_chat_history($connect)
 {
@@ -176,9 +119,8 @@ function fetch_group_chat_history($connect)
 			else
 			{
 				$chat_message = $row["chat_message"];
-				$user_name = '<button type="button" class="btn btn-danger btn-xs remove_chat" id="'.$row['chat_message_id'].'">x</button>&nbsp;<b class="text-success">You</b>';
+				$user_name = '<b class="text-success">You</b>';
 			}
-			
 			$dynamic_background = 'background-color:#ffe6e6;';
 		}
 		else
@@ -197,13 +139,13 @@ function fetch_group_chat_history($connect)
 
 		$output .= '
 
-		<li style="border-bottom:1px dotted #ccc;padding-top:8px; padding-left:8px; padding-right:8px;'.$dynamic_background.'">
+		<div style="border-bottom:1px dotted #ccc;padding-top:8px; padding-right:8px;'.$dynamic_background.'">
 			<p>'.$user_name.' - '.$chat_message.' 
 				<div align="right">
 					- <small><em>'.$row['timestamp'].'</em></small>
 				</div>
 			</p>
-		</li>
+		</div>
 		';
 	}
 	$output .= '</ul>';

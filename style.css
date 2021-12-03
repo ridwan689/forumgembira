@@ -295,3 +295,9 @@ hr {
 	padding-left:15px;
 	padding-right:15px;
 }
+
+.chatarea {
+	overflow-x: hidden;
+	overflow-y: auto;
+	height:400px;
+}

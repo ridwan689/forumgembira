@@ -1,7 +1,7 @@
 <?php
 // index.php
-session_start();
 include 'database_connection.php';
+session_start();
 $isLogin = 0;
 if(isset($_SESSION['username'])) {
 	$isLogin = 1;
@@ -23,7 +23,6 @@ if(isset($_GET['out'])) {
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.2.2/jquery.form.js"></script>
 	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-	<link rel="stylesheet" href="chatbox.css">
 	<link rel="stylesheet" href="style.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-jgrowl/1.4.0/jquery.jgrowl.css">
 </head>
@@ -50,7 +49,7 @@ if(isset($_GET['out'])) {
 	<div class="wrapper-flex">
 		<div class='left'>
 			<div class='box'>
-			<div class='boxtitle'>Search Thread</div>
+			<div class='boxtitle'>Search User</div>
 			<div class='boxcontent'>
 			<form method='post' action='?search'>
 			<input type='text' name='query' id='searchthread' style='width:100%;' placeholder='Keyword'>
@@ -60,57 +59,39 @@ if(isset($_GET['out'])) {
 			<script>
 			$( "#searchthread" ).keyup(function() {
 				var q = $("#searchthread").val();
-				var c = "+searchthread.php?q="+q;
+				var c = "+searchuser.php?q="+q;
 				$("#hasilsearch").html("Please wait...");
 				$("#hasilsearch").load(c);
 			});
 			</script>
 			</div>
 			</div>
+			<?php if(isset($_GET['id'])) { ?>
 			<div class="box col1">
-				<div class='boxtitle'>.:: Forum Gembira ::.</div>
+				<div class='boxtitle'>Chat Panel - Chat w/ @<?php echo get_user_name($_GET['id'], $connect); ?></div>
 				<div class='boxcontent'>
-				<p align='right'><a href='openthread.php'><button>Buat Thread Baru</button></a></p>
-				<br><hr><br>
 				<?php
-				$qT = $connect->prepare("SELECT * FROM post ORDER BY id_post DESC");
-				$qT->execute();
-				$thread = $qT->fetchAll();
-				$batas = 10;
-				$halaman = isset($_GET['page'])?(int)$_GET['page'] : 1;
-				$halaman_awal = ($halaman>1) ? ($halaman * $batas) - $batas : 0;	
-
-				$previous = $halaman - 1;
-				$next = $halaman + 1;
-				
-				$jumlah_data  = count($thread);
-				$totalHalaman = (int) $jumlah_data /$batas;
-				$nomor = $halaman_awal+1;
-				$data_thread = $connect->prepare("SELECT * FROM post ORDER BY id_post DESC LIMIT $halaman_awal, $batas");
-				$data_thread->execute();
-				$data_thread = $data_thread->fetchAll();
-				for($i=0; $i<count($data_thread); $i++) {
-				$id = $data_thread[$i]['id_post'];
-				$judul = $data_thread[$i]['title'];
-				$uplink = $data_thread[$i]['uplink'];
+				$id = $_GET['id'];
+				$usr = $connect->prepare("SELECT * FROM member_login WHERE user_id='$id'");
+				$usr->execute();
+				$usr = $usr->fetchAll();
+				if(count($usr) > 0) {
+					$usr=$usr[0];
 				?>
-				<fieldset class='threadtitle'>
-				<a href='thread.php?id=<?php echo $id; ?>'><?php echo $judul; ?></a>
-				<legend class='threadstarter'>Started by <a href='profile.php?user=<?php echo $uplink; ?>'><?php echo $uplink; ?></a></legend>
-				</fieldset>
-				<?php } ?>
-				<center>
-				Page
-				<?php 
-				for($x=1;$x<=$totalHalaman+1;$x++){
-					?> 
-					<a class="page-link" href="?page=<?php echo $x ?>"><?php echo $x; ?></a> &nbsp;
-					<?php
-				}
-				?>
-				</center>
+				<iframe style='border:0; width:100%; height:100px;' src='sendpc.php?id=<?php echo $id; ?>'></iframe>
+				<div id='chatarea' class='chatarea'>Please wait...</div>
+				<input type='text' id='chatwith' hidden='hidden' value='<?php echo $id; ?>'>
+				<script>
+				var target = $("#chatwith").val();
+				$("#chatarea").load("pc.php?id="+target);
+				setInterval(function(){
+					$("#chatarea").load("pc.php?id="+target);
+				}, 4000);
+				</script>
+				<?php } else { echo "Invalid user id"; } ?>
 				</div>
 			</div>
+			<?php } ?>
 		</div>
 	<?php include "rightbar.php"; ?>
 	</div>

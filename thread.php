@@ -124,7 +124,8 @@ if(!isset($_GET['id'])) {
 				$jumlah_data  = count($hrep);
 				$totalHalaman = (int) $jumlah_data /$batas;
 				$nomor = $halaman_awal+1;
-				$data_reply = $connect->prepare("SELECT * FROM reply WHERE id_post='$id' LIMIT $halaman_awal, $batas");
+				$tq = "SELECT * FROM reply WHERE id_post='$id' LIMIT $halaman_awal, $batas";
+				$data_reply = $connect->prepare($tq);
 				$data_reply->execute();
 				$data_reply=$data_reply->fetchAll();
 				for($i = 0; $i<count($data_reply); $i++) { 
@@ -133,18 +134,18 @@ if(!isset($_GET['id'])) {
 				
 				?>
 				<div class='box'>
-				<div class='boxtitle'>Reply by @<?php echo $hrep[$i]['uplink']; ?> - <?php echo $dt->format('Y-m-d H:i:s'); ?></div>
+				<div class='boxtitle'>Reply by @<?php echo $data_reply[$i]['uplink']; ?> - <?php echo $dt->format('Y-m-d H:i:s'); ?></div>
 				<div class='boxcontent'>
 				<?php
-				if($hrep[$i]['banned'] == 0) {
-				echo $hrep[$i]['konten'];
+				if($data_reply[$i]['banned'] == 0) {
+				echo $data_reply[$i]['konten'];
 				}
 				else
 					echo "<i>this reply has been removed/banned</i>";
 				?>
 				<?php
-				if($hrep[$i]['banned'] == 0) {
-					if($hrep[$i]['uplink'] == $_SESSION['username'] || $hasil['level'] == "Admin") {
+				if($data_reply[$i]['banned'] == 0) {
+					if($data_reply[$i]['uplink'] == $_SESSION['username'] || $hasil['level'] == "Admin") {
 						echo "<br><hr>";
 						?><br>
 						<?php

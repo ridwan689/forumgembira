@@ -1,7 +1,7 @@
 <?php
 // index.php
-session_start();
 include 'database_connection.php';
+session_start();
 $isLogin = 0;
 if(isset($_SESSION['username'])) {
 	$isLogin = 1;
@@ -50,7 +50,7 @@ if(isset($_GET['out'])) {
 	<div class="wrapper-flex">
 		<div class='left'>
 			<div class='box'>
-			<div class='boxtitle'>Search Thread</div>
+			<div class='boxtitle'>Search User</div>
 			<div class='boxcontent'>
 			<form method='post' action='?search'>
 			<input type='text' name='query' id='searchthread' style='width:100%;' placeholder='Keyword'>
@@ -60,57 +60,80 @@ if(isset($_GET['out'])) {
 			<script>
 			$( "#searchthread" ).keyup(function() {
 				var q = $("#searchthread").val();
-				var c = "+searchthread.php?q="+q;
+				var c = "+searchuser.php?q="+q;
 				$("#hasilsearch").html("Please wait...");
 				$("#hasilsearch").load(c);
 			});
 			</script>
 			</div>
 			</div>
+			<?php if(isset($_GET['id'])) { ?>
 			<div class="box col1">
 				<div class='boxtitle'>.:: Forum Gembira ::.</div>
 				<div class='boxcontent'>
-				<p align='right'><a href='openthread.php'><button>Buat Thread Baru</button></a></p>
-				<br><hr><br>
 				<?php
-				$qT = $connect->prepare("SELECT * FROM post ORDER BY id_post DESC");
-				$qT->execute();
-				$thread = $qT->fetchAll();
-				$batas = 10;
-				$halaman = isset($_GET['page'])?(int)$_GET['page'] : 1;
-				$halaman_awal = ($halaman>1) ? ($halaman * $batas) - $batas : 0;	
-
-				$previous = $halaman - 1;
-				$next = $halaman + 1;
-				
-				$jumlah_data  = count($thread);
-				$totalHalaman = (int) $jumlah_data /$batas;
-				$nomor = $halaman_awal+1;
-				$data_thread = $connect->prepare("SELECT * FROM post ORDER BY id_post DESC LIMIT $halaman_awal, $batas");
-				$data_thread->execute();
-				$data_thread = $data_thread->fetchAll();
-				for($i=0; $i<count($data_thread); $i++) {
-				$id = $data_thread[$i]['id_post'];
-				$judul = $data_thread[$i]['title'];
-				$uplink = $data_thread[$i]['uplink'];
+				$id = $_GET['id'];
+				$usr = $connect->prepare("SELECT * FROM member_login WHERE user_id='$id'");
+				$usr->execute();
+				$usr = $usr->fetchAll();
+				if(count($usr) > 0) {
+					$usr=$usr[0];
 				?>
-				<fieldset class='threadtitle'>
-				<a href='thread.php?id=<?php echo $id; ?>'><?php echo $judul; ?></a>
-				<legend class='threadstarter'>Started by <a href='profile.php?user=<?php echo $uplink; ?>'><?php echo $uplink; ?></a></legend>
+				<fieldset>
+				<legend>
+				Username
+				</legend>
+				<?php echo $usr['username']; ?>
 				</fieldset>
-				<?php } ?>
-				<center>
-				Page
+				<fieldset>
+				<legend>
+				Level
+				</legend>
+				<?php echo $usr['level']; ?>
+				</fieldset>
+
+				<fieldset>
+				<legend>
+				Registration Date
+				</legend>
+				<?php echo $usr['tanggal_daftar']; ?>
+				</fieldset>
+
+				<fieldset>
+				<legend>
+				Status User
+				</legend>
+				<?php echo $usr['status']; ?>
+				</fieldset>
+				<fieldset>
+				<legend>
+				Action
+				</legend>
+				<?php
+				if($hasil['level'] == "Admin" && $usr['user_id'] !== $_SESSION['user_id']) {
+				?>
 				<?php 
-				for($x=1;$x<=$totalHalaman+1;$x++){
-					?> 
-					<a class="page-link" href="?page=<?php echo $x ?>"><?php echo $x; ?></a> &nbsp;
-					<?php
+				if($usr['status'] == "normal") {
+				?>
+				<a href='banUser.php?id=<?php echo $usr['user_id'];?>&act=banned'><button>Ban</button></a>
+				<?php
+				}
+				else {
+				?>
+				<a href='banUser.php?id=<?php echo $usr['user_id'];?>&act=normal'><button>Unban</button></a>
+				<?php
 				}
 				?>
-				</center>
+				<?php } ?>
+				<?php if($usr['user_id'] !== $_SESSION['user_id']) { ?>
+				<a href='chatpanel.php?id=<?php echo $usr['user_id']; ?>'><button>Start Chat</button></a>
+				<?php } ?>
+				</fieldset>
+				
+				<?php } else { echo "Invalid user id"; } ?>
 				</div>
 			</div>
+			<?php } ?>
 		</div>
 	<?php include "rightbar.php"; ?>
 	</div>

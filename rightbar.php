@@ -23,9 +23,9 @@
 				<div class='boxtitle'><?php if($isLogin ==0 ) { ?>Register Form<?php } else { ?> User Panel<?php } ?></div>
 				<div class='boxcontent'>
 				<?php if($isLogin ==0 ) { ?>
-				<form method='post' action='?act=register'>
+				<form method='post' action='+register.php'>
 				<fieldset class='inp-field'><legend>Nickname</legend>
-				<input type='text' name='username' placeholder='Enter your Nickname'>
+				<input type='text' name='nickname' placeholder='Enter your Nickname'>
 				</fieldset>
 				<fieldset class='inp-field'><legend>Username</legend>
 				<input type='text' name='username' placeholder='Enter your Username'>
@@ -35,14 +35,24 @@
 				<input type='password' name='password' placeholder='Enter your password'>
 				</fieldset>
 				<fieldset class='inp-field'><legend>Confirm Password</legend>
-				<input type='password' name='password' placeholder='Confirm your password'>
+				<input type='password' name='confirm_password' placeholder='Confirm your password'>
 				</fieldset>
 				<p align='right'><button type='submit' Value='Sign Up'>Sign Up</button></p>
 				</form>
 				<?php } else { ?>
-				<a href='profile.php?user=<?php echo $username; ?>'><button class='colmax'>My Profile</button></a>
+				<a href='profile.php'><button class='colmax'>Search Profile</button></a>
+				<a href='profile.php?id=<?php echo $_SESSION['user_id']; ?>'><button class='colmax'>My Profile</button></a>
+				<a href='chatpanel.php'> <button class='colmax'>Chat Panel</button></a>
 				<a href='?out'> <button class='colmax'>Sign Out</button></a>
 				<?php } ?>
 				</div>
+			</div>
+			<div class='box' style='max-height:600px;'>
+			<div class='boxtitle'>Global Chat</div>
+			<div class='boxcontent'>
+			<iframe style='width:100%; height:auto; border:0;' src='sendgc.php'></iframe>
+
+			<iframe  style='width:100%; height:400px; border:0;' src='globalchat.php'></iframe>
+			</div>
 			</div>
 		</div>

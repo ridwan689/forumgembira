@@ -28,6 +28,8 @@ if(isset($_POST['username']))
 		{
 			if(password_verify($_POST["password"], $row["password"]))
 			{
+				if($row['status'] == "banned")
+					die("<script>alert('your account has been banned by administrator. contact admin or just create new account');window.location='index.php';</script>");
 				$_SESSION['user_id'] = $row['user_id'];
 				$_SESSION['username'] = $row['username'];
 				$sub_query = "
