@@ -16,6 +16,17 @@ function get_user_name($user_id, $connect)
 		return $row['username'];
 	}
 }
+function get_user_id($username, $connect)
+{
+	$query = "SELECT user_id FROM member_login WHERE username = '$username'";
+	$statement = $connect->prepare($query);
+	$statement->execute();
+	$result = $statement->fetchAll();
+	foreach($result as $row)
+	{
+		return $row['user_id'];
+	}
+}
 
 function fetch_user_chat_history($from_user_id, $to_user_id, $connect)
 {
@@ -109,33 +120,9 @@ function fetch_group_chat_history($connect)
 		$user_name = '';
 		$dynamic_background = '';
 		$chat_message = '';
-		if($row["from_user_id"] == $_SESSION["user_id"])
-		{
-			if($row["status"] == '2')
-			{
-				$chat_message = '<em>This message has been removed</em>';
-				$user_name = '<b class="text-success">You</b>';
-			}
-			else
-			{
 				$chat_message = $row["chat_message"];
-				$user_name = '<b class="text-success">You</b>';
-			}
-			$dynamic_background = 'background-color:#ffe6e6;';
-		}
-		else
-		{
-			if($row["status"] == '2')
-			{
-				$chat_message = '<em>This message has been removed</em>';
-			}
-			else
-			{
-				$chat_message = $row["chat_message"];
-			}
-			$user_name = '<b class="text-danger">'.get_user_name($row['from_user_id'], $connect).'</b>';
+			$user_name = '<b class="text-danger">@'.get_user_name($row['from_user_id'], $connect).'</b>';
 			$dynamic_background = 'background-color:#ffffe6;';
-		}
 
 		$output .= '
 
@@ -147,7 +134,7 @@ function fetch_group_chat_history($connect)
 			</p>
 		</div>
 		';
-	}
+	}	
 	$output .= '</ul>';
 	return $output;
 }

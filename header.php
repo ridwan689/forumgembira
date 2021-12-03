@@ -1,13 +1,14 @@
 <?php
-session_start();
+// index.php
 include 'database_connection.php';
-if(!isset($_SESSION['user_id'])) {
-	echo( "<script>alert('silahkan login dulu');window.location='index.php';</script>");
-}
-
+session_start();
 $isLogin = 0;
-if(isset($_SESSION['user_id'])) {
+if(isset($_SESSION['username'])) {
 	$isLogin = 1;
+	$username = $_SESSION['username'];
+	$hasil = $connect->prepare("SELECT * FROM member_login WHERE username='$username'");
+	$hasil->execute();
+	$hasil = $hasil->fetchAll()[0];
 }
 if(isset($_GET['out'])) {
 	session_destroy();
@@ -18,9 +19,11 @@ if(isset($_GET['out'])) {
 <head>
 	<title>.:: Forum Gembira ::.</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.2.2/jquery.form.js"></script>
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 	<link rel="stylesheet" href="style.css">
-	<link rel="stylesheet" href="texting.css">
-	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-jgrowl/1.4.0/jquery.jgrowl.css">
 </head>
 
@@ -43,17 +46,3 @@ if(isset($_GET['out'])) {
 	</a>
 	</div>
 	</div>
-	<div class="wrapper-flex">
-		<div class='left'>
-			<div class="box col1">
-				<div class='boxtitle'>.:: Open Thread ::.</div>
-				<div class='boxcontent'>
-				<iframe src='ngepost.php' width="100%" height="600px" style='border:none;'></iframe>
-				</iframe>
-				</div>
-			</div>
-		</div>
-<?php
-include "rightbar.php";
-include "footer.php";
-?>

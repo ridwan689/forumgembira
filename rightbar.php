@@ -5,10 +5,10 @@
 				<?php if($isLogin ==0 ) { ?>
 				<form method='post' action='+login.php'>
 				<fieldset class='inp-field'><legend>Username</legend>
-				<input type='text' name='username' placeholder='Enter your Username'>
+				<input type='text' name='username'onkeypress="allowAlphaNumericSpace(event)" placeholder='Enter your Username'>
 				</fieldset>
 				<fieldset class='inp-field'><legend>Password</legend>
-				<input type='password' name='password' placeholder='Enter your password'>
+				<input type='password'onkeypress="allowAlphaNumericSpace(event)" name='password' placeholder='Enter your password'>
 				</fieldset>
 				<p align='right'><button type='submit' Value='Sign in'>Sign In</button></p>
 				</form>
@@ -28,14 +28,14 @@
 				<input type='text' name='nickname' placeholder='Enter your Nickname'>
 				</fieldset>
 				<fieldset class='inp-field'><legend>Username</legend>
-				<input type='text' name='username' placeholder='Enter your Username'>
+				<input type='text' name='username'onkeypress="allowAlphaNumericSpace(event)" placeholder='Enter your Username'>
 				<small>*only containing non capital and number</small>
 				</fieldset>
 				<fieldset class='inp-field'><legend>Password</legend>
-				<input type='password' name='password' placeholder='Enter your password'>
+				<input type='password' name='password'onkeypress="allowAlphaNumericSpace(event)" placeholder='Enter your password'>
 				</fieldset>
 				<fieldset class='inp-field'><legend>Confirm Password</legend>
-				<input type='password' name='confirm_password' placeholder='Confirm your password'>
+				<input type='password' name='confirm_password'onkeypress="allowAlphaNumericSpace(event)" placeholder='Confirm your password'>
 				</fieldset>
 				<p align='right'><button type='submit' Value='Sign Up'>Sign Up</button></p>
 				</form>
@@ -50,8 +50,9 @@
 			<div class='box' style='max-height:600px;'>
 			<div class='boxtitle'>Global Chat</div>
 			<div class='boxcontent'>
+			<?php if(isset($_SESSION['username'])) { ?>
 			<iframe style='width:100%; height:auto; border:0;' src='sendgc.php'></iframe>
-
+			<?php } ?>
 			<iframe  style='width:100%; height:400px; border:0;' src='globalchat.php'></iframe>
 			</div>
 			</div>
